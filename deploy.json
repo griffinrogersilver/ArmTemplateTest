@@ -1,0 +1,32 @@
+ {
+            "type": "Microsoft.Web/sites/functions",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_file_monitor_function_app_name'), '/my-file-monitor')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_file_monitor_function_app_name'))]"
+            ],
+            "properties": {
+                "config": {
+                    "bindings": [
+                        {
+                            "type": "blobTrigger",
+                            "direction": "Trigger",
+                            "name": "myBlob",
+                            "connection":"AzureWebJobsStorage",
+                            "path": "gtest/{name}"
+                        },
+                        {
+                            "type": "sendGrid",
+                            "direction": "out",
+                            "extension": {
+                              "id": "Microsoft.Azure.WebJobs.Extensions.SendGrid", "version": "3.0.0"
+                            },
+                            "name": "$return",
+                            "apiKey": "FILE_MONITOR_SENDGRID_APIKEY"
+                        }
+                    ]
+                },
+                "test_data": "samples-workitems/workitem.txt"
+            }
+        },
